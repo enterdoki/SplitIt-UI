@@ -1,19 +1,31 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Actions } from 'react-native-router-flux';
+import { Container, Header, Content, Form, Item, Input } from 'native-base';
+export default class App extends React.Component {
+  constructor(props) {
+    super(props)
+  }
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
-  );
+
+  render() {
+    return (
+      <Container>
+          <Header/>
+          <Text style = {styles.baseText}>Hello</Text>
+        
+      </Container>
+    )
+  }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  baseText: {
+    fontFamily: 'Cochin',
+    marginVertical: 20,
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
