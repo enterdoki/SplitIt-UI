@@ -8,6 +8,7 @@ import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
 import { emailValidator, passwordValidator } from '../core/utils';
+import Logo from '../components/Logo';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState({ value: '', error: '' });
@@ -42,7 +43,7 @@ const LoginScreen = ({ navigation }) => {
   return (
     <Background>
 
-
+      <Logo/>
       <Header>Welcome to SplitIt!</Header>
 
       <TextInput
