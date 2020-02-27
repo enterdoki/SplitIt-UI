@@ -1,11 +1,10 @@
 import React, { memo, useState } from 'react';
 import axios from 'axios';
-import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import Background from '../components/Background';
 import Header from '../components/Header';
 import Button from '../components/Button';
 import TextInput from '../components/TextInput';
-import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
 import { emailValidator, passwordValidator } from '../core/utils';
 import Logo from '../components/Logo';
@@ -42,10 +41,10 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <Background>
-
+      
       <Logo/>
       <Header>Welcome to SplitIt!</Header>
-
+      
       <TextInput
         label="Email"
         returnKeyType="next"

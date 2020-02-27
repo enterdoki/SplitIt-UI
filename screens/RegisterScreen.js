@@ -1,9 +1,10 @@
 import React, { memo, useState } from 'react';
 import axios from 'axios';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { StatusBar, ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Background from '../components/Background';
 import Header from '../components/Header';
 import Button from '../components/Button';
+import BackButton from '../components/BackButton';
 import TextInput from '../components/TextInput';
 import { theme } from '../core/theme';
 import {
@@ -51,62 +52,65 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <Background>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <Background>
+        <BackButton goBack={() => navigation.navigate('LoginScreen')} />
 
-      <Header>Create an Account</Header>
+        <Header>Create an Account</Header>
 
-      <TextInput
-        label="First Name"
-        returnKeyType="next"
-        value={firstName.value}
-        onChangeText={text => setFirstName({ value: text, error: '' })}
-        error={!!firstName.error}
-        errorText={firstName.error}
-      />
+        <TextInput
+          label="First Name"
+          returnKeyType="next"
+          value={firstName.value}
+          onChangeText={text => setFirstName({ value: text, error: '' })}
+          error={!!firstName.error}
+          errorText={firstName.error}
+        />
 
-      <TextInput
-        label="Last Name"
-        returnKeyType="next"
-        value={lastName.value}
-        onChangeText={text => setLastName({ value: text, error: '' })}
-        error={!!lastName.error}
-        errorText={lastName.error}
-      />
+        <TextInput
+          label="Last Name"
+          returnKeyType="next"
+          value={lastName.value}
+          onChangeText={text => setLastName({ value: text, error: '' })}
+          error={!!lastName.error}
+          errorText={lastName.error}
+        />
 
-      <TextInput
-        label="Email"
-        returnKeyType="next"
-        value={email.value}
-        onChangeText={text => setEmail({ value: text, error: '' })}
-        error={!!email.error}
-        errorText={email.error}
-        autoCapitalize="none"
-        autoCompleteType="email"
-        textContentType="emailAddress"
-        keyboardType="email-address"
-      />
+        <TextInput
+          label="Email"
+          returnKeyType="next"
+          value={email.value}
+          onChangeText={text => setEmail({ value: text, error: '' })}
+          error={!!email.error}
+          errorText={email.error}
+          autoCapitalize="none"
+          autoCompleteType="email"
+          textContentType="emailAddress"
+          keyboardType="email-address"
+        />
 
-      <TextInput
-        label="Password"
-        returnKeyType="done"
-        value={password.value}
-        onChangeText={text => setPassword({ value: text, error: '' })}
-        error={!!password.error}
-        errorText={password.error}
-        secureTextEntry
-      />
+        <TextInput
+          label="Password"
+          returnKeyType="done"
+          value={password.value}
+          onChangeText={text => setPassword({ value: text, error: '' })}
+          error={!!password.error}
+          errorText={password.error}
+          secureTextEntry
+        />
 
-      <Button mode="contained" onPress={_onSignUpPressed} style={styles.button}>
-        Sign Up
+        <Button mode="contained" onPress={_onSignUpPressed} style={styles.button}>
+          Sign Up
       </Button>
 
-      <View style={styles.row}>
-        <Text style={styles.label}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-          <Text style={styles.link}>Login</Text>
-        </TouchableOpacity>
-      </View>
-    </Background>
+        <View style={styles.row}>
+          <Text style={styles.label}>Already have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
+            <Text style={styles.link}>Login</Text>
+          </TouchableOpacity>
+        </View>
+      </Background>
+    </ScrollView>
   );
 };
 
@@ -124,7 +128,7 @@ const styles = StyleSheet.create({
   link: {
     fontWeight: 'bold',
     color: theme.colors.primary,
-  },
+  }
 });
 
 export default memo(RegisterScreen);
