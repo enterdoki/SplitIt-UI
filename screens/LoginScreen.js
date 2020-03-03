@@ -1,6 +1,6 @@
-import React, { memo, useState} from 'react';
+import React, { memo, useState } from 'react';
 import axios from 'axios';
-import { AsyncStorage, ScrollView, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import Background from '../components/Background';
 import Header from '../components/Header';
 import Button from '../components/Button';
@@ -8,39 +8,71 @@ import TextInput from '../components/TextInput';
 import { theme } from '../core/theme';
 import { emailValidator, passwordValidator } from '../core/utils';
 import Logo from '../components/Logo';
-import TouchID from 'react-native-touch-id';
+import * as LocalAuthentication from 'expo-local-authentication';
 import ToggleSwitch from 'toggle-switch-react-native';
+import * as SecureStore from 'expo-secure-store';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
-  const [enableTouchID, setTouchID] = useState({ value: false });
+  const [enableTouchID, setTouchID] = useState({ value: SecureStore.getItemAsync('TouchID') === null || 'false' ? false : true });
 
+  const _toggleTouchID = async () => {
+    if (enableTouchID.value === false) {
+      setTouchID({ value: true })
+      await SecureStore.setItemAsync('TouchID', 'true');
+    }
+    else {
+      setTouchID({ value: false })
+      await SecureStore.deleteItemAsync('TouchID');
+    }
+
+  }
   const _onLoginPressed = async () => {
 
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
 
-    if (emailError || passwordError) {
+    if (enableTouchID.value === true && await SecureStore.getItemAsync('Email') !== null && await SecureStore.getItemAsync('Password') !== null) {
+      const userData = {
+        email: await SecureStore.getItemAsync('Email'),
+        password: await SecureStore.getItemAsync('Password')
+      }
+      try {
+        const results = await LocalAuthentication.authenticateAsync();
+        if (results.success) {
+          const { data } = await axios.post('http://api-splitit.herokuapp.com/api/auth/login/', userData)
+          if (data['token']) {
+            navigation.navigate('HomeScreen');
+          }
+        }
+        else {
+          return;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    else if (emailError || passwordError) {
       setEmail({ ...email, error: emailError });
       setPassword({ ...password, error: passwordError });
       return;
     }
     else {
       try {
-        let userData = {
+        const userData = {
           email: email.value,
           password: password.value
         }
+
         const { data } = await axios.post('http://api-splitit.herokuapp.com/api/auth/login/', userData)
         if (data['token']) {
-          if(enableTouchID.value === true) {
-            await AsyncStorage.setItem('TouchID', 'true');
+          if (enableTouchID.value === true) {
+            await SecureStore.setItemAsync('Email', email.value);
+            await SecureStore.setItemAsync('Password', password.value);
           }
-          else if(enableTouchID.value === false) {
-            await AsyncStorage.removeItem('TouchID');
-          }
-          console.log(await AsyncStorage.getItem('TouchID'));
+          // setEmail({ value: '' });
+          // setPassword({ value: '' });
           navigation.navigate('HomeScreen');
         }
       } catch (err) {
@@ -79,15 +111,16 @@ const LoginScreen = ({ navigation }) => {
       />
       <View style={styles.forgotPassword}>
         <ToggleSwitch
-          isOn= {enableTouchID.value}
+          isOn={enableTouchID.value}
           onColor='#0099FF'
           offColor='#C0C0C0'
-          onToggle={() => setTouchID({value: !enableTouchID.value})}
-          label='Enable Touch ID'
+          onToggle={() => _toggleTouchID()}
+          label='Enable TouchID'
           labelStyle={{ color: 'red' }}
         />
         <TouchableOpacity
-          onPress={() => navigation.navigate('ForgotPasswordScreen')}
+          onPress={() => _removeStuff()}
+        // onPress={() => navigation.navigate('ForgotPasswordScreen')}
         >
           <Text style={styles.label}>Forgot your password?</Text>
         </TouchableOpacity>
