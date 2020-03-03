@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState} from 'react';
 import axios from 'axios';
 import { AsyncStorage, ScrollView, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import Background from '../components/Background';
@@ -34,6 +34,13 @@ const LoginScreen = ({ navigation }) => {
         }
         const { data } = await axios.post('http://api-splitit.herokuapp.com/api/auth/login/', userData)
         if (data['token']) {
+          if(enableTouchID.value === true) {
+            await AsyncStorage.setItem('TouchID', 'true');
+          }
+          else if(enableTouchID.value === false) {
+            await AsyncStorage.removeItem('TouchID');
+          }
+          console.log(await AsyncStorage.getItem('TouchID'));
           navigation.navigate('HomeScreen');
         }
       } catch (err) {
