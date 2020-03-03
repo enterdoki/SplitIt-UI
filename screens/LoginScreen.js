@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import axios from 'axios';
-import { ScrollView, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import { AsyncStorage, ScrollView, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import Background from '../components/Background';
 import Header from '../components/Header';
 import Button from '../components/Button';
@@ -8,10 +8,13 @@ import TextInput from '../components/TextInput';
 import { theme } from '../core/theme';
 import { emailValidator, passwordValidator } from '../core/utils';
 import Logo from '../components/Logo';
+import TouchID from 'react-native-touch-id';
+import ToggleSwitch from 'toggle-switch-react-native';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
+  const [enableTouchID, setTouchID] = useState({ value: false });
 
   const _onLoginPressed = async () => {
 
@@ -29,7 +32,7 @@ const LoginScreen = ({ navigation }) => {
           email: email.value,
           password: password.value
         }
-        const {data} = await axios.post('http://api-splitit.herokuapp.com/api/auth/login/', userData)
+        const { data } = await axios.post('http://api-splitit.herokuapp.com/api/auth/login/', userData)
         if (data['token']) {
           navigation.navigate('HomeScreen');
         }
@@ -41,10 +44,10 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <Background>
-      
-      <Logo/>
+
+      <Logo />
       <Header>Welcome to SplitIt!</Header>
-      
+
       <TextInput
         label="Email"
         returnKeyType="next"
@@ -67,8 +70,15 @@ const LoginScreen = ({ navigation }) => {
         errorText={password.error}
         secureTextEntry
       />
-
       <View style={styles.forgotPassword}>
+        <ToggleSwitch
+          isOn= {enableTouchID.value}
+          onColor='#0099FF'
+          offColor='#C0C0C0'
+          onToggle={() => setTouchID({value: !enableTouchID.value})}
+          label='Enable Touch ID'
+          labelStyle={{ color: 'red' }}
+        />
         <TouchableOpacity
           onPress={() => navigation.navigate('ForgotPasswordScreen')}
         >
@@ -94,7 +104,7 @@ const styles = StyleSheet.create({
   forgotPassword: {
     width: '100%',
     alignItems: 'flex-end',
-    marginBottom: 24,
+    marginBottom: 10,
   },
   row: {
     flexDirection: 'row',
