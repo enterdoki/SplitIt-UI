@@ -11,8 +11,10 @@ import Logo from '../components/Logo';
 import * as LocalAuthentication from 'expo-local-authentication';
 import ToggleSwitch from 'toggle-switch-react-native';
 import * as SecureStore from 'expo-secure-store';
+import { connect } from "react-redux";
+import { loginUserThunk } from '../store/utilities/user';
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation, loginUserThunk }) => {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
   const [enableTouchID, setTouchID] = useState({ value: SecureStore.getItemAsync('TouchID') === null || 'false' ? false : true });
@@ -29,7 +31,6 @@ const LoginScreen = ({ navigation }) => {
 
   }
   const _onLoginPressed = async () => {
-
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
 
@@ -41,10 +42,7 @@ const LoginScreen = ({ navigation }) => {
       try {
         const results = await LocalAuthentication.authenticateAsync();
         if (results.success) {
-          const { data } = await axios.post('http://api-splitit.herokuapp.com/api/auth/login/', userData)
-          if (data['token']) {
-            navigation.navigate('HomeScreen');
-          }
+          loginUserThunk(userData, navigation);
         }
         else {
           return;
@@ -64,16 +62,10 @@ const LoginScreen = ({ navigation }) => {
           email: email.value,
           password: password.value
         }
-
-        const { data } = await axios.post('http://api-splitit.herokuapp.com/api/auth/login/', userData)
-        if (data['token']) {
-          if (enableTouchID.value === true) {
-            await SecureStore.setItemAsync('Email', email.value);
-            await SecureStore.setItemAsync('Password', password.value);
-          }
-          // setEmail({ value: '' });
-          // setPassword({ value: '' });
-          navigation.navigate('HomeScreen');
+        loginUserThunk(userData, navigation);
+        if (enableTouchID.value === true) {
+          await SecureStore.setItemAsync('Email', email.value);
+          await SecureStore.setItemAsync('Password', password.value);
         }
       } catch (err) {
         console.log(err);
@@ -159,4 +151,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(LoginScreen);
+const mapState = state => ({
+  user: state.user
+})
+
+export default connect(mapState, { loginUserThunk })(memo(LoginScreen));

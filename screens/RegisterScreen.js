@@ -13,8 +13,10 @@ import {
   firstNameValidator,
   lastNameValidator
 } from '../core/utils';
+import { connect } from "react-redux";
+import { registerUserThunk } from '../store/utilities/user';
 
-const RegisterScreen = ({ navigation }) => {
+const RegisterScreen = ({ navigation, registerUserThunk }) => {
   const [firstName, setFirstName] = useState({ value: '', error: '' });
   const [lastName, setLastName] = useState({ value: '', error: '' });
   const [email, setEmail] = useState({ value: '', error: '' });
@@ -41,10 +43,7 @@ const RegisterScreen = ({ navigation }) => {
           email: email.value,
           password: password.value
         }
-        const data = await axios.post('http://api-splitit.herokuapp.com/api/auth/register/', newUser)
-        if (data.status === 201) {
-          navigation.navigate('LoginScreen');
-        }
+        registerUserThunk(newUser);
       } catch (err) {
         console.log(err);
       }
@@ -131,4 +130,8 @@ const styles = StyleSheet.create({
   }
 });
 
-export default memo(RegisterScreen);
+const mapState = state => ({
+  user: state.user
+})
+
+export default connect(mapState, { registerUserThunk })(memo(RegisterScreen));
