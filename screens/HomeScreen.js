@@ -41,11 +41,12 @@ class HomeScreen extends React.Component {
           style={styles.background}
         >
           <Appbar.Header >
-            <Appbar.Action style={{ alignItems: 'flex-start' }} size={30} icon="dots-vertical" onPress={() => console.log('menu click')} />
-            {/* <Appbar.Content 
-              title={this.state.firstName}
-              subtitle={this.state.lastName}
-            /> */}
+            {/* <Appbar.Action style={{ alignItems: 'flex-start' }} size={30} icon="dots-vertical" onPress={() => console.log('menu click')} /> */}
+            <Appbar.Content 
+              style={{ flex: 0, alignItems: 'flex-start' }}
+              title={this.state.firstName.charAt(0)}
+              subtitle={this.state.lastName.charAt(0)}
+            />
             <Appbar.Action style={styles.bar} size={35}
               icon={() => (
                 <Image
@@ -80,11 +81,11 @@ class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
   bar: {
     flex: 1,
-    // alignItems: 'center',
+    alignItems: 'center',
     // width: 50,
     // height: 50,
     // overflow:'hidden'
-    // justifyContent: 'center',
+    justifyContent: 'center',
 
   },
   container: {
