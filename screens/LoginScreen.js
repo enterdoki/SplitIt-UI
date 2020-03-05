@@ -1,6 +1,5 @@
 import React, { memo, useState } from 'react';
-import axios from 'axios';
-import { ScrollView, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native'
 import Background from '../components/Background';
 import Header from '../components/Header';
 import Button from '../components/Button';
@@ -111,8 +110,7 @@ const LoginScreen = ({ navigation, loginUserThunk }) => {
           labelStyle={{ color: 'red' }}
         />
         <TouchableOpacity
-          onPress={() => _removeStuff()}
-        // onPress={() => navigation.navigate('ForgotPasswordScreen')}
+          onPress={() => navigation.navigate('ForgotPasswordScreen')}
         >
           <Text style={styles.label}>Forgot your password?</Text>
         </TouchableOpacity>

@@ -16,7 +16,7 @@ const setCurrentUser = userData => {
 
 export const registerUserThunk = (userData, navigation) => async (dispatch) => {
     try {
-        const data = await axios.post('http://api-splitit.herokuapp.com/api/auth/register/', newUser)
+        const data = await axios.post('http://api-splitit.herokuapp.com/api/auth/register/', userData)
         if (data.status === 201) {
           navigation.navigate('LoginScreen');
         }
