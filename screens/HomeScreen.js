@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
-import { getReceiptDataThunk } from '../store/utilities/receipt';
+import { uploadReceiptDataThunk } from '../store/utilities/receipt';
 
 class HomeScreen extends React.Component {
   _isMounted = false
@@ -19,7 +19,6 @@ class HomeScreen extends React.Component {
       lastName: '',
       balance: 0,
       image: ' ',
-      selectedImage: null
     }
   }
 
@@ -38,26 +37,25 @@ class HomeScreen extends React.Component {
   }
 
   _pickImage = async () => {
-    if (Constants.platform.ios) {
+    if (Constants.platform.ios || Constants.platform.android) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
+        if(Constants.platform.ios) alert('Sorry, we need camera roll permissions to make this work!');
+        return;
       }
       else {
         let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
         });
-    
         if (!result.cancelled) {
-          this.setState({ selectedImage: result.uri});          
+          this.props.uploadReceiptDataThunk(this.props.user['user'].id, result.uri);         
         }
-        
-        this.props.getReceiptDataThunk(this.props.user['user'].id, this.state.selectedImage);
       }
     }
   };
 
   render() {
+    console.log(this.props.receipt['receiptData'])
     return (
       <View style={styles.container}>
         <ImageBackground
@@ -130,4 +128,4 @@ const mapState = state => ({
   receipt: state.receipt
 })
 
-export default connect(mapState, {getReceiptDataThunk})(memo(HomeScreen));
+export default connect(mapState, {uploadReceiptDataThunk})(memo(HomeScreen));
