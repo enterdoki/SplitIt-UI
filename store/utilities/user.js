@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
 
 const SET_CURRENT_USER = "SET_CURRENT_USER";
 
@@ -29,6 +30,7 @@ export const loginUserThunk = (userData, navigation) => async (dispatch) => {
     try {
         const { data } = await axios.post('http://api-splitit.herokuapp.com/api/auth/login/', userData)
         if (data['token']) {
+            await SecureStore.setItemAsync('Token', data['token']);
             dispatch(setCurrentUser(data['user']));
             navigation.navigate('HomeScreen')
         }

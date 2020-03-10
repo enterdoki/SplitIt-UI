@@ -5,6 +5,10 @@ import Header from '../components/Header';
 import Paragraph from '../components/Paragraph';
 import Button from '../components/Button';
 import { connect } from "react-redux";
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
+import { getReceiptDataThunk } from '../store/utilities/receipt';
 
 class HomeScreen extends React.Component {
   _isMounted = false
@@ -14,7 +18,8 @@ class HomeScreen extends React.Component {
       firstName: '',
       lastName: '',
       balance: 0,
-      image: ' '
+      image: ' ',
+      selectedImage: null
     }
   }
 
@@ -31,6 +36,26 @@ class HomeScreen extends React.Component {
   componentWillUnmount() {
     this._isMounted = false;
   }
+
+  _pickImage = async () => {
+    if (Constants.platform.ios) {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!');
+      }
+      else {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+        });
+    
+        if (!result.cancelled) {
+          this.setState({ selectedImage: result.uri});          
+        }
+        
+        this.props.getReceiptDataThunk(this.props.user['user'].id, this.state.selectedImage);
+      }
+    }
+  };
 
   render() {
     return (
@@ -56,7 +81,7 @@ class HomeScreen extends React.Component {
               )}
             />
 
-            <Appbar.Action style={{ alignItems: 'flex-end' }} size={30} icon="plus" onPress={() => console.log('add click')} />
+            <Appbar.Action style={{ alignItems: 'flex-end' }} size={30} icon="plus" onPress={() => this._pickImage()} />
 
 
           </Appbar.Header>
@@ -65,7 +90,7 @@ class HomeScreen extends React.Component {
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <Paragraph>
               Welcome to SplitIt. Here, you can split your restaurant bills with ease! Hope you enjoy your stay.
-          Hello {this.state.firstName} {this.state.lastName}! Your current balance: ${this.state.balance}.
+          Hello {this.state.firstName} {this.state.lastName}! Your current balance fuck: ${this.state.balance}.
             </Paragraph>
 
             <Button mode="outlined" onPress={() => this.props.navigation.navigate('LoginScreen')}>
@@ -101,7 +126,8 @@ const styles = StyleSheet.create({
 });
 
 const mapState = state => ({
-  user: state.user
+  user: state.user,
+  receipt: state.receipt
 })
 
-export default connect(mapState)(memo(HomeScreen));
+export default connect(mapState, {getReceiptDataThunk})(memo(HomeScreen));
