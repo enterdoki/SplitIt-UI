@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
-import { Text, View, ScrollView, StyleSheet, ImageBackground, Image, TouchableHighlight } from 'react-native'
-import { Appbar } from 'react-native-paper';
+import { Text, View, ScrollView, StyleSheet, ImageBackground, Image, TouchableHighlight } from 'react-native';
+import ActionSheet from 'react-native-actionsheet';
+import { Appbar, ActivityIndicator } from 'react-native-paper';
 import Header from '../components/Header';
 import Paragraph from '../components/Paragraph';
 import Button from '../components/Button';
@@ -9,6 +10,8 @@ import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import { uploadReceiptDataThunk } from '../store/utilities/receipt';
+import { logoutUserThunk } from '../store/utilities/user';
+import Receipt from '../components/Receipt';
 
 class HomeScreen extends React.Component {
   _isMounted = false
@@ -18,7 +21,7 @@ class HomeScreen extends React.Component {
       firstName: '',
       lastName: '',
       balance: 0,
-      image: ' ',
+      image: ' '
     }
   }
 
@@ -28,7 +31,7 @@ class HomeScreen extends React.Component {
       firstName: this.props.user['user'].firstName,
       lastName: this.props.user['user'].lastName,
       balance: this.props.user['user'].balance,
-      image: this.props.user['user'].profilePicture
+      image: this.props.user['user'].profilePicture,
     })
   }
 
@@ -36,11 +39,11 @@ class HomeScreen extends React.Component {
     this._isMounted = false;
   }
 
-  _pickImage = async () => {
+  _pickLibraryImage = async () => {
     if (Constants.platform.ios || Constants.platform.android) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== 'granted') {
-        if(Constants.platform.ios) alert('Sorry, we need camera roll permissions to make this work!');
+        if (Constants.platform.ios) alert('Sorry, we need camera roll permissions to make this work!');
         return;
       }
       else {
@@ -48,14 +51,36 @@ class HomeScreen extends React.Component {
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
         });
         if (!result.cancelled) {
-          this.props.uploadReceiptDataThunk(this.props.user['user'].id, result.uri);         
+          this.props.uploadReceiptDataThunk(this.props.user['user'].id, result.uri);
         }
       }
     }
   };
 
+  _pickCameraImage = async () => {
+    if (Constants.platform.ios || Constants.platform.android) {
+      const status1 = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      const status2 = await Permissions.askAsync(Permissions.CAMERA);
+      if (status1.status !== 'granted' && status2.status !== 'granted') {
+        if (Constants.platform.ios) alert('Sorry, we need camera roll and camera permissions to make this work!');
+        return;
+      }
+      else {
+        let result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        });
+        if (!result.cancelled) {
+          this.props.uploadReceiptDataThunk(this.props.user['user'].id, result.uri);
+        }
+      }
+    }
+  };
+
+  showActionSheet = () => {
+    this.ActionSheet.show()
+  }
+
   render() {
-    console.log(this.props.receipt['receiptData'])
     return (
       <View style={styles.container}>
         <ImageBackground
@@ -65,7 +90,7 @@ class HomeScreen extends React.Component {
         >
           <Appbar.Header >
             {/* <Appbar.Action style={{ alignItems: 'flex-start' }} size={30} icon="dots-vertical" onPress={() => console.log('menu click')} /> */}
-            <Appbar.Content 
+            <Appbar.Content
               style={{ flex: 0, alignItems: 'flex-start' }}
               title={this.state.firstName.charAt(0)}
               subtitle={this.state.lastName.charAt(0)}
@@ -79,7 +104,7 @@ class HomeScreen extends React.Component {
               )}
             />
 
-            <Appbar.Action style={{ alignItems: 'flex-end' }} size={30} icon="plus" onPress={() => this._pickImage()} />
+            <Appbar.Action style={{ alignItems: 'flex-end' }} size={30} icon="plus" onPress={() => this.showActionSheet()} />
 
 
           </Appbar.Header>
@@ -88,13 +113,32 @@ class HomeScreen extends React.Component {
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <Paragraph>
               Welcome to SplitIt. Here, you can split your restaurant bills with ease! Hope you enjoy your stay.
-          Hello {this.state.firstName} {this.state.lastName}! Your current balance fuck: ${this.state.balance}.
+          Hello {this.state.firstName} {this.state.lastName}! Your current balance: ${this.state.balance}.
             </Paragraph>
 
-            <Button mode="outlined" onPress={() => this.props.navigation.navigate('LoginScreen')}>
-              Logout
-          </Button>
+            {(this.props.receipt.pending === true && this.props.receipt.success === false) ? (<ActivityIndicator animating={true} color='#0099FF' size='small' style={styles.spinner} />) : (<View />)}
+            {(this.props.receipt.pending === false && this.props.receipt.success === true) ? (<Receipt />) : (<View />)}
+
+
+            <ActionSheet
+              ref={o => this.ActionSheet = o}
+              title={'Select an image from...'}
+              options={['Camera', 'Photo Library', 'Cancel']}
+              cancelButtonIndex={2}
+              destructiveButtonIndex={2}
+              onPress={(index) => {
+                if (index == 0) {
+                  this._pickCameraImage()
+                }
+                if (index == 1) {
+                  this._pickLibraryImage()
+                }
+              }}
+            />
           </ScrollView>
+          <Button style={styles.button} mode="outlined" onPress={() => this.props.logoutUserThunk(this.props.navigation)}>
+            Logout
+          </Button>
         </ImageBackground>
       </View>
     )
@@ -120,6 +164,17 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     width: '100%',
+  },
+  spinner: {
+    position: 'absolute',
+    top: 0, left: 0,
+    right: 0, bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  button: {
+    position: 'absolute',
+    bottom: 0
   }
 });
 
@@ -128,4 +183,4 @@ const mapState = state => ({
   receipt: state.receipt
 })
 
-export default connect(mapState, {uploadReceiptDataThunk})(memo(HomeScreen));
+export default connect(mapState, { uploadReceiptDataThunk, logoutUserThunk })(memo(HomeScreen));

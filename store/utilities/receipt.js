@@ -2,23 +2,38 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import FormData from 'form-data';
 
+const SET_RECEIPT_DATA = "SET_RECEIPT_DATA";
 const GET_RECEIPT_DATA = "GET_RECEIPT_DATA";
+const RESET_RECEIPT_DATA = "RESET_RECEIPT_DATA";
 
 const initialState = {
     receiptData: {},
-    loading: false,
+    success: false,
+    pending: false,
 };
 
-const getReceiptData = (data) => {
+const setReceiptData = (data) => {
     return {
-        type: GET_RECEIPT_DATA,
+        type: SET_RECEIPT_DATA,
         payload: data
     }
-}
+};
+
+const getReceiptData = () => {
+    return {
+        type: GET_RECEIPT_DATA
+    }
+};
+
+const resetReceiptData = () => {
+    return {
+        type: RESET_RECEIPT_DATA
+    }
+};
 
 export const uploadReceiptDataThunk = (id, selectedFile) => async (dispatch) => {
     try {
-        
+        dispatch(getReceiptData());
         const data = new FormData();
         const uriParts = selectedFile.split('.');
         const fileType = uriParts[uriParts.length-1];
@@ -26,6 +41,7 @@ export const uploadReceiptDataThunk = (id, selectedFile) => async (dispatch) => 
         data.append('image', {uri:selectedFile.replace('file://', ''), type:`image/${fileType}`, name:`${name}.${fileType}`});
         const token = await SecureStore.getItemAsync('Token');
         
+        console.log('im here.');
         const url = await axios.post(`http://api-splitit.herokuapp.com/api/user/${id}/upload`, data, {
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -38,6 +54,7 @@ export const uploadReceiptDataThunk = (id, selectedFile) => async (dispatch) => 
             url: url['data'].imageURL
         }
         
+        console.log('im here2.');
         const result = await axios.post('https://api.taggun.io/api/receipt/v1/simple/url', body, {
             headers: {
                 "Content-Type": "application/json",
@@ -45,20 +62,35 @@ export const uploadReceiptDataThunk = (id, selectedFile) => async (dispatch) => 
               }
         })
         
-        dispatch(getReceiptData(result['data']));
+        console.log('im here3.');
+        dispatch(setReceiptData(result['data']));
     }
     catch (err) {
         console.log(err);
     }
 }
 
+export const resetReceiptDataThunk = () => (dispatch) => {
+    dispatch(resetReceiptData());
+}
+
 export default (state = initialState, action) => {
     switch (action.type) {
-        case GET_RECEIPT_DATA:
+        case SET_RECEIPT_DATA:
             return {
                 ...state,
                 receiptData: action.payload,
+                success: true,
+                pending: false,
             };
+        case GET_RECEIPT_DATA:
+            return {
+                ...state,
+                pending: true,
+                success: false,
+            };
+        case RESET_RECEIPT_DATA:
+            return initialState;
         default:
             return state;
     }

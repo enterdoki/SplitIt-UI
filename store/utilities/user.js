@@ -32,12 +32,22 @@ export const loginUserThunk = (userData, navigation) => async (dispatch) => {
         if (data['token']) {
             await SecureStore.setItemAsync('Token', data['token']);
             dispatch(setCurrentUser(data['user']));
-            navigation.navigate('HomeScreen')
+            navigation.replace('HomeScreen')
         }
     } catch (err) {
         console.log(err);
     }
-}
+};
+
+export const logoutUserThunk = (navigation) => async(dispatch) => {
+    try {
+        await SecureStore.deleteItemAsync('Token');
+        dispatch(setCurrentUser({}));
+        navigation.replace('LoginScreen');
+    } catch(err) {
+        console.log(err);
+    }
+};
 
 export default (state = initialState, action) => {
     switch (action.type) {
