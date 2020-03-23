@@ -32,7 +32,7 @@ export const loginUserThunk = (userData, navigation) => async (dispatch) => {
         if (data['token']) {
             await SecureStore.setItemAsync('Token', data['token']);
             dispatch(setCurrentUser(data['user']));
-            navigation.replace('HomeScreen')
+            navigation.replace('Landing')
         }
     } catch (err) {
         console.log(err);

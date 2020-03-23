@@ -41,7 +41,6 @@ export const uploadReceiptDataThunk = (id, selectedFile) => async (dispatch) => 
         data.append('image', {uri:selectedFile.replace('file://', ''), type:`image/${fileType}`, name:`${name}.${fileType}`});
         const token = await SecureStore.getItemAsync('Token');
         
-        console.log('im here.');
         const url = await axios.post(`http://api-splitit.herokuapp.com/api/user/${id}/upload`, data, {
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -54,7 +53,6 @@ export const uploadReceiptDataThunk = (id, selectedFile) => async (dispatch) => 
             url: url['data'].imageURL
         }
         
-        console.log('im here2.');
         const result = await axios.post('https://api.taggun.io/api/receipt/v1/simple/url', body, {
             headers: {
                 "Content-Type": "application/json",
@@ -62,7 +60,6 @@ export const uploadReceiptDataThunk = (id, selectedFile) => async (dispatch) => 
               }
         })
         
-        console.log('im here3.');
         dispatch(setReceiptData(result['data']));
     }
     catch (err) {
