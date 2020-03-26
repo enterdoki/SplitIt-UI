@@ -19,13 +19,13 @@ const Receipt = ({ receipt }) => {
                 <DataTable.Row>
                     <DataTable.Cell>Chicken Bowl</DataTable.Cell>
                     <DataTable.Cell numeric>1.0</DataTable.Cell>
-                    <DataTable.Cell numeric>8.96</DataTable.Cell>
+                    <DataTable.Cell numeric>8.95</DataTable.Cell>
                 </DataTable.Row>
 
                 <DataTable.Row>
                     <DataTable.Cell>Chips and Guac</DataTable.Cell>
                     <DataTable.Cell numeric>1.0</DataTable.Cell>
-                    <DataTable.Cell numeric>0.01</DataTable.Cell>
+                    <DataTable.Cell numeric>0.00</DataTable.Cell>
                 </DataTable.Row>
 
                 {/* <DataTable.Pagination

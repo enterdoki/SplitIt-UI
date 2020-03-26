@@ -1,8 +1,55 @@
-import React, { memo, useState } from 'react';
-import { View, ScrollView, StyleSheet, ImageBackground, TouchableOpacity, Text } from 'react-native'
-import { Appbar } from 'react-native-paper';
+import React, { memo, useState, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, ImageBackground, Image, Modal } from 'react-native';
+import moment from 'moment';
+import { Appbar, Button, Card, Title, Paragraph } from 'react-native-paper';
+import { connect } from "react-redux";
+import * as SecureStore from 'expo-secure-store';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import axios from 'axios';
 
-const ReceiptScreen = ({ }) => {
+const ReceiptScreen = ({ user }) => {
+    const [receipts, setReceipts] = useState([]);
+    const [clicked, setClicked] = useState(false);
+    const [images, setImages] = useState([]);
+    
+    useEffect(() => {
+        const getReceipts = async () => {
+            try {
+                const id = user['user'].id;
+                const token = await SecureStore.getItemAsync('Token');
+                const { data } = await axios.get(`http://api-splitit.herokuapp.com/api/user/${id}/receipts`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                })
+                setReceipts(data);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        getReceipts();
+    }, []);
+
+
+    const imageViewer = (index) => {
+        setImages([{url: receipts[index].imageURL}]);
+        setClicked(clicked => !clicked);
+    };
+
+    const loadReceipts = () => {
+        return (
+            receipts.map((item, index) => (
+                <Card key={index} style={{ margin: 5 }} onPress={() => imageViewer(index)}>
+                    <Card.Content>
+                        <Title>{moment(item.uploadDate).format('MMMM Do YYYY, h:mm a')}</Title>
+                    </Card.Content>
+                    <Card.Cover source={{ uri: item.imageURL }} />
+                </Card>
+            ))
+        );
+    };
+
     return (
         <View style={styles.container}>
             <ImageBackground
@@ -17,8 +64,11 @@ const ReceiptScreen = ({ }) => {
                     />
                 </Appbar.Header>
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                    <Text>Receipt List Screen</Text>
+                    {loadReceipts()}
                 </ScrollView>
+                <Modal visible={clicked} transparent={true}>
+                    <ImageViewer imageUrls={images} onSwipeDown={() => setClicked(clicked => !clicked)}  enableSwipeDown={true}/>
+                </Modal>
             </ImageBackground>
         </View >
     );
@@ -46,4 +96,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export default memo(ReceiptScreen);
+const mapState = state => ({
+    user: state.user,
+})
+
+export default connect(mapState)(memo(ReceiptScreen));
