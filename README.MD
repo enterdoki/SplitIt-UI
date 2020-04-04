@@ -20,9 +20,9 @@ SplitIt is a mobile app designed to provide an easy way to split bills with your
 
 4. Host the application on localHost.
 
-5. ``` npm start ```
+   ``` npm start ```
 
-6. Scan the QR code present in the web terminal.
+5. Scan the QR code present in the web terminal.
 
 
 
