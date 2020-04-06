@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Text, View, ScrollView, StyleSheet, ImageBackground, Image, TouchableHighlight } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, ImageBackground, Image, TouchableOpacity } from 'react-native';
 import ActionSheet from 'react-native-actionsheet';
 import { Appbar, ActivityIndicator, Banner, Searchbar } from 'react-native-paper';
 import Paragraph from '../components/Paragraph';
@@ -11,6 +11,8 @@ import { uploadReceiptDataThunk } from '../store/utilities/receipt';
 import { logoutUserThunk } from '../store/utilities/user';
 import Receipt from '../components/Receipt';
 import { theme } from '../core/theme';
+import { getFriendsThunk } from '../store/utilities/friend';
+import { SearchableFlatList } from "react-native-searchable-list";
 
 class HomeScreen extends React.Component {
   _isMounted = false
@@ -21,12 +23,16 @@ class HomeScreen extends React.Component {
       lastName: '',
       balance: 0,
       image: ' ',
-      query: ''
+      query: '',
+      searchAttribute: "firstName",
+      ignoreCase: true
     }
   }
 
   componentDidMount() {
     this._isMounted = true;
+    const id = this.props.user['user'].id;
+    this.props.getFriendsThunk(id);
     this.setState({
       firstName: this.props.user['user'].firstName,
       lastName: this.props.user['user'].lastName,
@@ -125,18 +131,35 @@ class HomeScreen extends React.Component {
           >
             <Paragraph>Your current balance is: ${this.state.balance}.</Paragraph>
           </Banner>
+
           <Searchbar
-            placeholder="Search"
+            placeholder="Search friends..."
             onChangeText={query => { this.setState({ query: query }); }}
             value={this.state.query}
             style={{ margin: 5 }}
-            inputStyle= {{color: theme.colors.secondary}}
+            inputStyle={{ color: theme.colors.secondary }}
           />
+
+          <SearchableFlatList
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            data={this.props.friend['friends']}
+            searchTerm={this.state.query} searchAttribute={this.state.searchAttribute}
+            ignoreCase={this.state.ignoreCase}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => console.log(item.firstName + ' pressed.')}>
+                <View>
+                  <Image style={styles.image} source={{ uri: item.profilePicture }} />
+                  <Text style={styles.name}>{item.firstName}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item, index) => index.toString()} />
+
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
             {(this.props.receipt.pending === true && this.props.receipt.success === false) ? (<ActivityIndicator animating={true} color='#0099FF' size='small' style={styles.spinner} />) : (<View />)}
             {(this.props.receipt.pending === false && this.props.receipt.success === true) ? (<Receipt />) : (<View />)}
-
 
             <ActionSheet
               ref={o => this.ActionSheet = o}
@@ -164,15 +187,11 @@ const styles = StyleSheet.create({
   bar: {
     flex: 1,
     alignItems: 'center',
-    // width: 50,
-    // height: 50,
-    // overflow:'hidden'
     justifyContent: 'center',
 
   },
   container: {
     flex: 1,
-    // alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -190,12 +209,25 @@ const styles = StyleSheet.create({
   button: {
     position: 'absolute',
     bottom: 0
-  }
+  },
+  image: {
+    margin: 3,
+    width: 60,
+    height: 60,
+    marginRight: 10,
+    borderRadius: 40,
+  },
+  name: {
+    fontSize: 10,
+    textAlign: 'center',
+    marginRight: 5
+  },
 });
 
 const mapState = state => ({
   user: state.user,
-  receipt: state.receipt
+  receipt: state.receipt,
+  friend: state.friend
 })
 
-export default connect(mapState, { uploadReceiptDataThunk, logoutUserThunk })(memo(HomeScreen));
+export default connect(mapState, { uploadReceiptDataThunk, logoutUserThunk, getFriendsThunk })(memo(HomeScreen));

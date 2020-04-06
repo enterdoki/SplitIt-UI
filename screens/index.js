@@ -5,3 +5,4 @@ export { default as HomeScreen } from './HomeScreen';
 export { default as FriendScreen } from './FriendScreen';
 export { default as ReceiptScreen } from './ReceiptScreen';
 export { default as HistoryScreen } from './HistoryScreen';
+export { default as SearchScreen } from './SearchScreen';

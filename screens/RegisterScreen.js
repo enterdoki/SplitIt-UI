@@ -43,7 +43,7 @@ const RegisterScreen = ({ navigation, registerUserThunk }) => {
           email: email.value,
           password: password.value
         }
-        registerUserThunk(newUser);
+        registerUserThunk(newUser, navigation);
       } catch (err) {
         console.log(err);
       }

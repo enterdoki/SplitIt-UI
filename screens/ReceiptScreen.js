@@ -42,9 +42,10 @@ const ReceiptScreen = ({ user }) => {
             receipts.map((item, index) => (
                 <Card key={index} style={{ margin: 5 }} onPress={() => imageViewer(index)}>
                     <Card.Content>
-                        <Title>{moment(item.uploadDate).format('MMMM Do YYYY, h:mm a')}</Title>
+                        <Title>{item.name}</Title>
+                        <Paragraph>{moment(item.uploadDate).format('MMMM Do YYYY, h:mm a')}</Paragraph>
                     </Card.Content>
-                    <Card.Cover source={{ uri: item.imageURL }} />
+                    {/* <Card.Cover source={{ uri: item.imageURL }} /> */}
                 </Card>
             ))
         );

@@ -10,7 +10,8 @@ import {
   HomeScreen,
   FriendScreen,
   HistoryScreen,
-  ReceiptScreen
+  ReceiptScreen,
+  SearchScreen
 } from '../screens';
 
 const Landing = createBottomTabNavigator(
@@ -62,6 +63,7 @@ const Router = createStackNavigator(
     LoginScreen,
     RegisterScreen,
     ForgotPasswordScreen,
+    SearchScreen,
     Landing: {
       screen: Landing
     }

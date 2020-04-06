@@ -60,6 +60,19 @@ export const uploadReceiptDataThunk = (id, selectedFile) => async (dispatch) => 
               }
         })
         
+        const receiptId = url['data'].id;
+
+        const merchantName = {
+            name: result['data']['merchantName'].data
+        }
+
+        await axios.put(`http://api-splitit.herokuapp.com/api/user/receipt/${receiptId}/update`, merchantName, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": 'application/json',
+            }
+        })
+
         dispatch(setReceiptData(result['data']));
     }
     catch (err) {

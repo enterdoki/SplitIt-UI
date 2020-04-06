@@ -5,9 +5,8 @@ import { DataTable, Button } from 'react-native-paper';
 import { theme } from '../core/theme';
 
 const Receipt = ({ receipt }) => {
-    console.log(receipt['receiptData']);
     return (
-        <View>
+        <View style={{marginTop: 20}}>
             <DataTable>
                 <Text style={styles.title}>{receipt['receiptData']['merchantName'].data}</Text>
                 <DataTable.Header>
