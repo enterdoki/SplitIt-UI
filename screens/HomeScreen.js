@@ -11,7 +11,7 @@ import { uploadReceiptDataThunk } from '../store/utilities/receipt';
 import { logoutUserThunk } from '../store/utilities/user';
 import Receipt from '../components/Receipt';
 import { theme } from '../core/theme';
-import { getFriendsThunk } from '../store/utilities/friend';
+import { getFriendsThunk, getPendingFriendsThunk } from '../store/utilities/friend';
 import { SearchableFlatList } from "react-native-searchable-list";
 
 class HomeScreen extends React.Component {
@@ -33,6 +33,7 @@ class HomeScreen extends React.Component {
     this._isMounted = true;
     const id = this.props.user['user'].id;
     this.props.getFriendsThunk(id);
+    this.props.getPendingFriendsThunk(id);
     this.setState({
       firstName: this.props.user['user'].firstName,
       lastName: this.props.user['user'].lastName,
@@ -230,4 +231,4 @@ const mapState = state => ({
   friend: state.friend
 })
 
-export default connect(mapState, { uploadReceiptDataThunk, logoutUserThunk, getFriendsThunk })(memo(HomeScreen));
+export default connect(mapState, { uploadReceiptDataThunk, logoutUserThunk, getFriendsThunk, getPendingFriendsThunk })(memo(HomeScreen));

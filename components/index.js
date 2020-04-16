@@ -11,7 +11,8 @@ import {
   FriendScreen,
   HistoryScreen,
   ReceiptScreen,
-  SearchScreen
+  SearchScreen,
+  PendingFriendScreen,
 } from '../screens';
 
 const Landing = createBottomTabNavigator(
@@ -64,6 +65,7 @@ const Router = createStackNavigator(
     RegisterScreen,
     ForgotPasswordScreen,
     SearchScreen,
+    PendingFriendScreen,
     Landing: {
       screen: Landing
     }

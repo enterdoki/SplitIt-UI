@@ -8,7 +8,6 @@ import { AntDesign } from '@expo/vector-icons';
 
 
 const FriendScreen = ({ friend, navigation }) => {
-    
     return (
         <View style={styles.container}>
             <ImageBackground
@@ -36,13 +35,16 @@ const FriendScreen = ({ friend, navigation }) => {
                     <Button style={{ margin: 5 }} mode="contained" onPress={() => navigation.navigate('SearchScreen')}> Search For Friends</Button>
                 </View>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('PendingFriendScreen')}>
                     <View style={styles.subContainer}>
                         <View style={styles.info}>
                             <Text style={styles.name}>
-                                Pending Friend Requests
+                                Pending Friend Requests: 
                             </Text>
                         </View>
+                        <Text style={styles.number}>
+                            {' '}{friend['pending'].length}
+                        </Text>
                         <AntDesign name="right" style={styles.icon} color='grey' size={20} />
                     </View>
                 </TouchableOpacity>
@@ -84,7 +86,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         position: 'absolute',
-        top: 8,
+        top: 10,
         right: 0,
     },
     info: {
@@ -101,6 +103,10 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 20,
     },
+    number: {
+        fontSize: 25,
+        color: 'red',
+    }
 });
 
 const mapState = state => ({

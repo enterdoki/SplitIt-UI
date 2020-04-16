@@ -6,3 +6,4 @@ export { default as FriendScreen } from './FriendScreen';
 export { default as ReceiptScreen } from './ReceiptScreen';
 export { default as HistoryScreen } from './HistoryScreen';
 export { default as SearchScreen } from './SearchScreen';
+export { default as PendingFriendScreen } from './PendingFriendScreen';
