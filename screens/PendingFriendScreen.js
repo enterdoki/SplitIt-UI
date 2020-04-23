@@ -24,10 +24,10 @@ const PendingFriendScreen = ({ user, friend, navigation, acceptFriendThunk, dele
                 {friend['pending'] !== undefined ? <ScrollView contentContainerStyle={styles.scrollContainer}>
                     {friend['pending'].map((item, index) => (
                         <View key={index}>
-                            <FriendCard friend={item} />
+                            <FriendCard navigation={navigation} friend={item} />
                             <View style={styles.button}>
-                                <Button style={{margin: 5}} mode="contained" onPress={() => acceptFriendThunk(item, user['user'].id, item.id)}>Accept</Button>
-                                <Button style={{margin: 5}} mode="contained" onPress={() => deleteFriendThunk(item, user['user'].id, item.id)}>Decline</Button>
+                                <Button style={{ margin: 5 }} mode="contained" onPress={() => acceptFriendThunk(item, user['user'].id, item.id)}>Accept</Button>
+                                <Button style={{ margin: 5 }} mode="contained" onPress={() => deleteFriendThunk(item, user['user'].id, item.id)}>Decline</Button>
                             </View>
                         </View>
                     ))}

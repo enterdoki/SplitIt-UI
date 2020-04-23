@@ -8,6 +8,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 
 const FriendScreen = ({ friend, navigation }) => {
+    
     return (
         <View style={styles.container}>
             <ImageBackground
@@ -39,7 +40,7 @@ const FriendScreen = ({ friend, navigation }) => {
                     <View style={styles.subContainer}>
                         <View style={styles.info}>
                             <Text style={styles.name}>
-                                Pending Friend Requests: 
+                                Pending Friend Requests:
                             </Text>
                         </View>
                         <Text style={styles.number}>
@@ -51,7 +52,7 @@ const FriendScreen = ({ friend, navigation }) => {
 
                 {friend['friends'] !== undefined ? <ScrollView contentContainerStyle={styles.scrollContainer}>
                     {friend['friends'].map((item, index) => (
-                        <FriendCard key={index} friend={item} />
+                        <FriendCard navigation={navigation} key={index} friend={item} />
                     ))}
                 </ScrollView> : (<View />)}
             </ImageBackground>

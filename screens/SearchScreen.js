@@ -55,7 +55,7 @@ const SearchScreen = ({ user, navigation }) => {
                     searchTerm={query} searchAttribute={searchAttribute}
                     ignoreCase={ignoreCase}
                     renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => console.log(item.firstName + ' pressed.')}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', { user: item })}>
                             <View style={styles.subContainer}>
                                 <Image style={styles.image} source={{ uri: item.profilePicture }} />
                                 <View style={styles.info}>

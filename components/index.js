@@ -13,6 +13,7 @@ import {
   ReceiptScreen,
   SearchScreen,
   PendingFriendScreen,
+  ProfileScreen
 } from '../screens';
 
 const Landing = createBottomTabNavigator(
@@ -66,6 +67,7 @@ const Router = createStackNavigator(
     ForgotPasswordScreen,
     SearchScreen,
     PendingFriendScreen,
+    ProfileScreen,
     Landing: {
       screen: Landing
     }

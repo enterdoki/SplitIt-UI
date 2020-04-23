@@ -2,9 +2,9 @@ import React, { memo } from 'react';
 import { StyleSheet, Image, View, Text, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 
-const FriendCard = ({ friend }) => {
+const FriendCard = ({ friend, navigation }) => {
     return (
-        <TouchableOpacity onPress={() => console.log(friend.firstName + ' pressed.')}>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', { user: friend })}>
             <View style={styles.container}>
                 <Image style={styles.image} source={{ uri: friend.profilePicture }} />
                 <View style={styles.info}>
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     },
     email: {
         fontSize: 16,
-        fontWeight: '100',
+        fontWeight: '300',
     },
     icon: {
         position: 'absolute',
