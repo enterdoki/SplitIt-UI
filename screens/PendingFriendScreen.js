@@ -3,9 +3,9 @@ import { View, ScrollView, StyleSheet, ImageBackground, TouchableOpacity, Image,
 import { Appbar, Button } from 'react-native-paper';
 import { connect } from "react-redux";
 import FriendCard from '../components/FriendCard';
-import { acceptFriendThunk, deleteFriendThunk } from '../store/utilities/friend';
+import { acceptFriendThunk, declineFriendThunk } from '../store/utilities/friend';
 
-const PendingFriendScreen = ({ user, friend, navigation, acceptFriendThunk, deleteFriendThunk }) => {
+const PendingFriendScreen = ({ user, friend, navigation, acceptFriendThunk, declineFriendThunk }) => {
     return (
         <View style={styles.container}>
             <ImageBackground
@@ -27,7 +27,7 @@ const PendingFriendScreen = ({ user, friend, navigation, acceptFriendThunk, dele
                             <FriendCard navigation={navigation} friend={item} />
                             <View style={styles.button}>
                                 <Button style={{ margin: 5 }} mode="contained" onPress={() => acceptFriendThunk(item, user['user'].id, item.id)}>Accept</Button>
-                                <Button style={{ margin: 5 }} mode="contained" onPress={() => deleteFriendThunk(item, user['user'].id, item.id)}>Decline</Button>
+                                <Button style={{ margin: 5 }} mode="contained" onPress={() => declineFriendThunk(item, user['user'].id, item.id)}>Decline</Button>
                             </View>
                         </View>
                     ))}
@@ -64,4 +64,4 @@ const mapState = state => ({
     friend: state.friend,
 })
 
-export default connect(mapState, { acceptFriendThunk, deleteFriendThunk })(memo(PendingFriendScreen));
+export default connect(mapState, { acceptFriendThunk, declineFriendThunk })(memo(PendingFriendScreen));

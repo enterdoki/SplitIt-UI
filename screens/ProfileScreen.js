@@ -1,12 +1,35 @@
-import React, { memo, useState, } from 'react';
+import React, { memo, useState, useEffect } from 'react';
+import { connect } from "react-redux";
+import * as SecureStore from 'expo-secure-store';
+import axios from 'axios';
 import { View, Text, ScrollView, StyleSheet, ImageBackground, Image, TouchableOpacity } from 'react-native';
 import { Appbar, Button } from 'react-native-paper';
 import BackButton from '../components/BackButton';
+import { addFriendThunk, deleteFriendThunk } from '../store/utilities/friend';
 
-const ProfileScreen = ({ navigation }) => {
-    const user = navigation.state.params.user;
+const ProfileScreen = ({ user, navigation, addFriendThunk, deleteFriendThunk }) => {
+    const profile = navigation.state.params.user;
     const [status, setStatus] = useState('');
 
+    useEffect(() => {
+        const getStatus = async () => {
+            try {
+                const id = user['user'].id;
+                const token = await SecureStore.getItemAsync('Token');
+                const { data } = await axios.get(`http://api-splitit.herokuapp.com/api/friend/status/${id}/${profile.id}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                })
+
+                setStatus(data['status']);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        getStatus();
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -15,24 +38,24 @@ const ProfileScreen = ({ navigation }) => {
 
             <BackButton goBack={() => navigation.navigate('FriendScreen')} />
 
-            <Image style={styles.avatar} source={{ uri: user.profilePicture }} />
+            <Image style={styles.avatar} source={{ uri: profile.profilePicture }} />
 
             <ScrollView style={styles.body}>
                 <View style={styles.bodyContent}>
-                    <Text style={styles.name}>{user.firstName}{' '}{user.lastName}</Text>
-                    <Text style={styles.info}>{user.email}</Text>
+                    <Text style={styles.name}>{profile.firstName}{' '}{profile.lastName}</Text>
+                    <Text style={styles.info}>{profile.email}</Text>
 
-                    <TouchableOpacity style={styles.buttonContainer} onPress={() => console.log('add')}>
+                    {status !== 'ACCEPTED' && <TouchableOpacity style={styles.buttonContainer} onPress={() => addFriendThunk(profile)}>
                         <Text style={{ fontSize: 18, color: 'white' }}>Add user</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
 
-                    <TouchableOpacity style={styles.buttonContainer} onPress={() => console.log('add')}>
+                    {(status !== 'PENDING' && status === 'ACCEPTED') && <TouchableOpacity style={styles.buttonContainer} onPress={() => console.log('add')}>
                         <Text style={{ fontSize: 18, color: 'white' }}>Block user</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
 
-                    <TouchableOpacity style={styles.buttonContainer} onPress={() => console.log('add')}>
-                        <Text style={{ fontSize: 18, color: 'white' }}>Delete friend</Text>
-                    </TouchableOpacity>
+                    {(status !== 'PENDING' && status === 'ACCEPTED') && <TouchableOpacity style={styles.buttonContainer} onPress={() => deleteFriendThunk(profile)}>
+                        <Text style={{ fontSize: 18, color: 'white' }}>Remove friend</Text>
+                    </TouchableOpacity>}
                 </View>
             </ScrollView>
         </View>
@@ -98,7 +121,9 @@ const styles = StyleSheet.create({
     },
 });
 
+const mapState = state => ({
+    user: state.user,
+})
 
 
-
-export default memo(ProfileScreen);
+export default connect(mapState, { addFriendThunk, deleteFriendThunk })(memo(ProfileScreen));
