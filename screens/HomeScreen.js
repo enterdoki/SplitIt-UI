@@ -133,7 +133,7 @@ class HomeScreen extends React.Component {
             <Paragraph>Your current balance is: ${this.state.balance}.</Paragraph>
           </Banner>
 
-          <Searchbar
+          {/* <Searchbar
             placeholder="Search friends..."
             onChangeText={query => { this.setState({ query: query }); }}
             value={this.state.query}
@@ -155,7 +155,7 @@ class HomeScreen extends React.Component {
                 </View>
               </TouchableOpacity>
             )}
-            keyExtractor={(item, index) => index.toString()} />
+            keyExtractor={(item, index) => index.toString()} /> */}
 
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
@@ -210,25 +210,12 @@ const styles = StyleSheet.create({
   button: {
     position: 'absolute',
     bottom: 0
-  },
-  image: {
-    margin: 3,
-    width: 60,
-    height: 60,
-    marginRight: 10,
-    borderRadius: 40,
-  },
-  name: {
-    fontSize: 10,
-    textAlign: 'center',
-    marginRight: 5
-  },
+  }
 });
 
 const mapState = state => ({
   user: state.user,
   receipt: state.receipt,
-  friend: state.friend
 })
 
 export default connect(mapState, { uploadReceiptDataThunk, logoutUserThunk, getFriendsThunk, getPendingFriendsThunk })(memo(HomeScreen));

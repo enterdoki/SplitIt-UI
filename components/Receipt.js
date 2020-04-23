@@ -1,12 +1,39 @@
 import React, { useState, memo } from 'react';
 import { connect } from "react-redux";
-import { View, Text, StyleSheet } from 'react-native';
-import { DataTable, Button } from 'react-native-paper';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { DataTable, Button, Searchbar } from 'react-native-paper';
 import { theme } from '../core/theme';
+import { SearchableFlatList } from "react-native-searchable-list";
 
-const Receipt = ({ receipt }) => {
+const Receipt = ({ receipt, friend }) => {
+    const [query, setQuery] = useState('');
+    const searchAttribute = "firstName";
+    const ignoreCase = true;
     return (
-        <View style={{marginTop: 20}}>
+        <View>
+            <Searchbar
+                placeholder="Search friends..."
+                onChangeText={query => setQuery(query)}
+                value={query}
+                style={{ margin: 5 }}
+                inputStyle={{ color: theme.colors.secondary }}
+            />
+
+            <SearchableFlatList
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                data={friend['friends']}
+                searchTerm={query} searchAttribute={searchAttribute}
+                ignoreCase={ignoreCase}
+                renderItem={({ item }) => (
+                    <TouchableOpacity onPress={() => console.log('test')}>
+                        <View>
+                            <Image style={styles.image} source={{ uri: item.profilePicture }} />
+                            <Text style={styles.name}>{item.firstName}</Text>
+                        </View>
+                    </TouchableOpacity>
+                )}
+                keyExtractor={(item, index) => index.toString()} />
             <DataTable>
                 <Text style={styles.title}>{receipt['receiptData']['merchantName'].data}</Text>
                 <DataTable.Header>
@@ -27,17 +54,11 @@ const Receipt = ({ receipt }) => {
                     <DataTable.Cell numeric>0.00</DataTable.Cell>
                 </DataTable.Row>
 
-                {/* <DataTable.Pagination
-                page={1}
-                numberOfPages={3}
-                onPageChange={(page) => { console.log(page); }}
-                label="1-2 of 6"
-            /> */}
                 <Text style={styles.text}>Sales Tax: ${receipt['receiptData']['taxAmount'].data}</Text>
                 <Text style={styles.text}>Total: ${receipt['receiptData']['totalAmount'].data}</Text>
             </DataTable>
             <View style={styles.button}>
-                <Button style={{margin: 5}} mode="contained" onPress={() => console.log('receipt button pressed')}> Next</Button>
+                <Button style={{ margin: 5 }} mode="contained" onPress={() => console.log('receipt button pressed')}> Next</Button>
             </View>
 
         </View>
@@ -54,16 +75,30 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 18,
         fontWeight: 'bold',
+        marginTop: 10,
     },
     button: {
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
-    }
+    },
+    image: {
+        margin: 3,
+        width: 60,
+        height: 60,
+        marginRight: 10,
+        borderRadius: 40,
+    },
+    name: {
+        fontSize: 13,
+        textAlign: 'center',
+        marginRight: 5
+    },
 });
 
 const mapState = state => ({
-    receipt: state.receipt
+    receipt: state.receipt,
+    friend: state.friend
 })
 
 export default connect(mapState)(memo(Receipt));
