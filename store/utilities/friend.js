@@ -104,7 +104,21 @@ export const getPendingFriendsThunk = (id) => async (dispatch) => {
 
 export const addFriendThunk = (data, idOne, idTwo) => async (dispatch) => {
     try {
-        dispatch(addFriend(data));
+        const token = await SecureStore.getItemAsync('Token');
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", `Bearer ${token}`);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch(`http://api-splitit.herokuapp.com/api/friend/request/${idOne}/${idTwo}`, requestOptions)
+            .then(response => response.text())
+            .then(() => dispatch(addFriend(data)))
+            .catch(error => console.log('error', error));
+
     } catch (err) {
         console.log(err);
     }
@@ -112,7 +126,21 @@ export const addFriendThunk = (data, idOne, idTwo) => async (dispatch) => {
 
 export const acceptFriendThunk = (data, idOne, idTwo) => async (dispatch) => {
     try {
-        dispatch(acceptFriend(data));
+        const token = await SecureStore.getItemAsync('Token');
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", `Bearer ${token}`);
+
+        var requestOptions = {
+            method: 'PUT',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch(`http://api-splitit.herokuapp.com/api/friend/accept/${idOne}/${idTwo}`, requestOptions)
+            .then(response => response.text())
+            .then(() => dispatch(acceptFriend(data)))
+            .catch(error => console.log('error', error));
+
     } catch (err) {
         console.log(err);
     }
@@ -120,7 +148,21 @@ export const acceptFriendThunk = (data, idOne, idTwo) => async (dispatch) => {
 
 export const declineFriendThunk = (data, idOne, idTwo) => async (dispatch) => {
     try {
-        dispatch(declineFriend(data));
+        const token = await SecureStore.getItemAsync('Token');
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", `Bearer ${token}`);
+
+        var requestOptions = {
+            method: 'DELETE',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch(`http://api-splitit.herokuapp.com/api/friend/decline/${idOne}/${idTwo}`, requestOptions)
+            .then(response => response.text())
+            .then(() => dispatch(declineFriend(data)))
+            .catch(error => console.log('error', error));
+        
     } catch (err) {
         console.log(err);
     }
@@ -128,7 +170,21 @@ export const declineFriendThunk = (data, idOne, idTwo) => async (dispatch) => {
 
 export const deleteFriendThunk = (data, idOne, idTwo) => async (dispatch) => {
     try {
-        dispatch(deleteFriend(data));
+        const token = await SecureStore.getItemAsync('Token');
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", `Bearer ${token}`);
+
+        var requestOptions = {
+            method: 'DELETE',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch(`http://api-splitit.herokuapp.com/api/friend/unfriend/${idOne}/${idTwo}`, requestOptions)
+            .then(response => response.text())
+            .then(() => dispatch(deleteFriend(data)))
+            .catch(error => console.log('error', error));
+        
     } catch (err) {
         console.log(err);
     }

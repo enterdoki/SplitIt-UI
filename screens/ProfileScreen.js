@@ -10,7 +10,7 @@ import { addFriendThunk, deleteFriendThunk } from '../store/utilities/friend';
 const ProfileScreen = ({ user, navigation, addFriendThunk, deleteFriendThunk }) => {
     const profile = navigation.state.params.user;
     const [status, setStatus] = useState('');
-
+    
     useEffect(() => {
         const getStatus = async () => {
             try {
@@ -22,7 +22,7 @@ const ProfileScreen = ({ user, navigation, addFriendThunk, deleteFriendThunk }) 
                         'Content-Type': 'application/json',
                     }
                 })
-
+                
                 setStatus(data['status']);
             } catch (err) {
                 console.log(err);
@@ -45,7 +45,7 @@ const ProfileScreen = ({ user, navigation, addFriendThunk, deleteFriendThunk }) 
                     <Text style={styles.name}>{profile.firstName}{' '}{profile.lastName}</Text>
                     <Text style={styles.info}>{profile.email}</Text>
 
-                    {status !== 'ACCEPTED' && <TouchableOpacity style={styles.buttonContainer} onPress={() => addFriendThunk(profile)}>
+                    {status !== 'ACCEPTED' && <TouchableOpacity style={styles.buttonContainer} onPress={() => addFriendThunk(profile, user['user'].id, profile.id)}>
                         <Text style={{ fontSize: 18, color: 'white' }}>Add user</Text>
                     </TouchableOpacity>}
 
@@ -53,7 +53,7 @@ const ProfileScreen = ({ user, navigation, addFriendThunk, deleteFriendThunk }) 
                         <Text style={{ fontSize: 18, color: 'white' }}>Block user</Text>
                     </TouchableOpacity>}
 
-                    {(status !== 'PENDING' && status === 'ACCEPTED') && <TouchableOpacity style={styles.buttonContainer} onPress={() => deleteFriendThunk(profile)}>
+                    {(status !== 'PENDING' && status === 'ACCEPTED') && <TouchableOpacity style={styles.buttonContainer} onPress={() => deleteFriendThunk(profile, user['user'].id, profile.id)}>
                         <Text style={{ fontSize: 18, color: 'white' }}>Remove friend</Text>
                     </TouchableOpacity>}
                 </View>
