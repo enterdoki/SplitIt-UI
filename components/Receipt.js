@@ -24,9 +24,9 @@ const Receipt = ({ receipt, friend }) => {
 
     const display = () => {
         return (
-            <View style={{ margin: 5 }}>
+            <View style={styles.tagged}>
                 {tagged.map((item, index) => (
-                    <TouchableOpacity key={index} onPress={() => remove(item.id)}><Text style={styles.subText}>{item.firstName}</Text></TouchableOpacity>
+                    <TouchableOpacity key={index} onPress={() => remove(item.id)}><Text style={styles.subText}>{item.firstName},{' '}</Text></TouchableOpacity>
                 ))}
             </View>
         )
@@ -102,7 +102,7 @@ const Receipt = ({ receipt, friend }) => {
                     />
                 }
             </View>
-            
+
             {tagged.length > 0 && display()}
             <View style={styles.button}>
                 <Button style={{ margin: 5 }} mode="contained" onPress={() => console.log('receipt button pressed')}> Split By Total</Button>
@@ -123,7 +123,8 @@ const styles = StyleSheet.create({
     subText: {
         textAlign: 'center',
         fontSize: 17.5,
-        color: theme.colors.secondary
+        color: theme.colors.secondary,
+        fontWeight: '600'
     },
     title: {
         textAlign: 'center',
@@ -154,7 +155,17 @@ const styles = StyleSheet.create({
         height: 35,
         width: 35,
         backgroundColor: 'white',
-        fontSize: 17.5
+        fontSize: 17.5,
+        borderRadius: 5,
+        textAlign: 'center'
+    },
+    tagged: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        margin: 5
     }
 });
 

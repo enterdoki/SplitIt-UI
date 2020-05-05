@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Text, View, ScrollView, StyleSheet, ImageBackground, Image, TouchableOpacity } from 'react-native';
+import { Text, KeyboardAvoidingView, Platform, View, ScrollView, StyleSheet, ImageBackground, Image, TouchableOpacity } from 'react-native';
 import ActionSheet from 'react-native-actionsheet';
 import { Appbar, ActivityIndicator, Banner, Searchbar } from 'react-native-paper';
 import Paragraph from '../components/Paragraph';
@@ -89,7 +89,7 @@ class HomeScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
         <ImageBackground
           source={require('../assets/background_dot.png')}
           resizeMode="repeat"
@@ -140,7 +140,7 @@ class HomeScreen extends React.Component {
             {(this.props.receipt.pending === false && this.props.receipt.success === true) ? (<Receipt />) : (<View />)} */}
 
             <Receipt />
-            
+
             <ActionSheet
               ref={o => this.ActionSheet = o}
               title={'Select an image from...'}
@@ -158,7 +158,7 @@ class HomeScreen extends React.Component {
             />
           </ScrollView>
         </ImageBackground>
-      </View>
+      </KeyboardAvoidingView>
     )
   }
 }
