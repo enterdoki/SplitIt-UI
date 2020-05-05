@@ -133,35 +133,14 @@ class HomeScreen extends React.Component {
             <Paragraph>Your current balance is: ${this.state.balance}.</Paragraph>
           </Banner>
 
-          {/* <Searchbar
-            placeholder="Search friends..."
-            onChangeText={query => { this.setState({ query: query }); }}
-            value={this.state.query}
-            style={{ margin: 5 }}
-            inputStyle={{ color: theme.colors.secondary }}
-          />
-
-          <SearchableFlatList
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            data={this.props.friend['friends']}
-            searchTerm={this.state.query} searchAttribute={this.state.searchAttribute}
-            ignoreCase={this.state.ignoreCase}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => console.log(item.firstName + ' pressed.')}>
-                <View>
-                  <Image style={styles.image} source={{ uri: item.profilePicture }} />
-                  <Text style={styles.name}>{item.firstName}</Text>
-                </View>
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item, index) => index.toString()} /> */}
-
+        
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
-            {(this.props.receipt.pending === true && this.props.receipt.success === false) ? (<ActivityIndicator animating={true} color='#0099FF' size='small' style={styles.spinner} />) : (<View />)}
-            {(this.props.receipt.pending === false && this.props.receipt.success === true) ? (<Receipt />) : (<View />)}
+            {/* {(this.props.receipt.pending === true && this.props.receipt.success === false) ? (<ActivityIndicator animating={true} color='#0099FF' size='small' style={styles.spinner} />) : (<View />)}
+            {(this.props.receipt.pending === false && this.props.receipt.success === true) ? (<Receipt />) : (<View />)} */}
 
+            <Receipt />
+            
             <ActionSheet
               ref={o => this.ActionSheet = o}
               title={'Select an image from...'}
