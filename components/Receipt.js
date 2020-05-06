@@ -138,7 +138,7 @@ const Receipt = ({ user, receipt, friend }) => {
 
             {tagged.length > 0 && display()}
             <View style={styles.button}>
-                <Button style={{ margin: 5 }} mode="contained" onPress={() => handleSplit(tagged, 9.80)}> Split By Total</Button>
+                <Button style={{ margin: 5 }} mode="contained" onPress={() => handleSplit(tagged, receipt['receiptData']['totalAmount'].data)}> Split By Total</Button>
                 <Button style={{ margin: 5 }} mode="contained" onPress={() => console.log('receipt button pressed')}> Next</Button>
             </View>
 
