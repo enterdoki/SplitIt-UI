@@ -73,6 +73,7 @@ export const uploadReceiptDataThunk = (id, selectedFile) => async (dispatch) => 
             }
         })
 
+        
         dispatch(setReceiptData(result['data']));
     }
     catch (err) {

@@ -7,11 +7,11 @@ import { connect } from "react-redux";
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
-import { uploadReceiptDataThunk } from '../store/utilities/receipt';
+import { uploadReceiptDataThunk, resetReceiptDataThunk } from '../store/utilities/receipt';
 import { logoutUserThunk } from '../store/utilities/user';
 import Receipt from '../components/Receipt';
 import { theme } from '../core/theme';
-import { getFriendsThunk, getPendingFriendsThunk } from '../store/utilities/friend';
+import { getFriendsThunk, getPendingFriendsThunk, resetFriendDataThunk } from '../store/utilities/friend';
 import { SearchableFlatList } from "react-native-searchable-list";
 
 class HomeScreen extends React.Component {
@@ -29,15 +29,17 @@ class HomeScreen extends React.Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this._isMounted = true;
     const id = this.props.user['user'].id;
-    this.props.getFriendsThunk(id);
-    this.props.getPendingFriendsThunk(id);
+
+    await this.props.getFriendsThunk(id);
+    await this.props.getPendingFriendsThunk(id);
+
     this.setState({
       firstName: this.props.user['user'].firstName,
       lastName: this.props.user['user'].lastName,
-      balance: this.props.user['user'].balance,
+      balance: this.props.friend.balance,
       image: this.props.user['user'].profilePicture,
     })
   }
@@ -87,6 +89,12 @@ class HomeScreen extends React.Component {
     this.ActionSheet.show()
   }
 
+  handleLogout = () => {
+    this.props.resetFriendDataThunk()
+    this.props.resetReceiptDataThunk()
+    this.props.logoutUserThunk(this.props.navigation)
+  }
+
   render() {
     return (
       <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
@@ -100,7 +108,7 @@ class HomeScreen extends React.Component {
               style={{ flex: 0, alignItems: 'flex-start' }}
               title={this.state.firstName.charAt(0) + this.state.lastName.charAt(0)}
               subtitle='Logout'
-              onPress={() => this.props.logoutUserThunk(this.props.navigation)}
+              onPress={() => this.handleLogout()}
             />
             <Appbar.Action style={styles.bar} size={35}
               icon={() => (
@@ -133,13 +141,13 @@ class HomeScreen extends React.Component {
             <Paragraph>Your current balance is: ${this.state.balance}.</Paragraph>
           </Banner>
 
-        
+
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
-            {/* {(this.props.receipt.pending === true && this.props.receipt.success === false) ? (<ActivityIndicator animating={true} color='#0099FF' size='small' style={styles.spinner} />) : (<View />)}
-            {(this.props.receipt.pending === false && this.props.receipt.success === true) ? (<Receipt />) : (<View />)} */}
+            {(this.props.receipt.pending === true && this.props.receipt.success === false) ? (<ActivityIndicator animating={true} color='#0099FF' size='small' style={styles.spinner} />) : (<View />)}
+            {(this.props.receipt.pending === false && this.props.receipt.success === true) ? (<Receipt />) : (<View />)}
 
-            <Receipt />
+            {/* <Receipt /> */}
 
             <ActionSheet
               ref={o => this.ActionSheet = o}
@@ -195,6 +203,7 @@ const styles = StyleSheet.create({
 const mapState = state => ({
   user: state.user,
   receipt: state.receipt,
+  friend: state.friend
 })
 
-export default connect(mapState, { uploadReceiptDataThunk, logoutUserThunk, getFriendsThunk, getPendingFriendsThunk })(memo(HomeScreen));
+export default connect(mapState, { uploadReceiptDataThunk, logoutUserThunk, getFriendsThunk, getPendingFriendsThunk, resetFriendDataThunk, resetReceiptDataThunk })(memo(HomeScreen));

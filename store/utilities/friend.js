@@ -7,11 +7,13 @@ const ACCEPT_FRIEND = "ACCEPT_FRIEND";
 const DELETE_FRIEND = "DELETE_FRIEND";
 const ADD_FRIEND = "ADD_FRIEND";
 const DECLINE_FRIEND = "DECLINE_FRIEND";
+const RESET_FRIEND_DATA = "RESET_FRIEND_DATA";
 
 const initialState = {
     friends: [],
     pending: [],
     blocked: [],
+    balance: 0,
 };
 
 const setFriendData = (data) => {
@@ -56,6 +58,12 @@ const declineFriend = (data) => {
     }
 };
 
+const resetFriendData = () => {
+    return {
+        type: RESET_FRIEND_DATA
+    }
+}
+
 export const getFriendsThunk = (id) => async (dispatch) => {
     try {
         const token = await SecureStore.getItemAsync('Token');
@@ -66,14 +74,14 @@ export const getFriendsThunk = (id) => async (dispatch) => {
             }
         })
 
-        const friends = [];
-        data.map(item => (
-            Object.entries(item).map(([key, value]) => (
-                friends.push(value)
-            ))
-        ))
-
-        dispatch(setFriendData(friends));
+        let friends = [];
+        let total = 0;
+        for(let i = 0; i < data.length; i++) {
+            total += data[i].balance
+            friends.push(data[i].userTwo)
+        }
+        
+        dispatch(setFriendData({friends,total}));
     } catch (err) {
         console.log(err);
     }
@@ -190,12 +198,17 @@ export const deleteFriendThunk = (data, idOne, idTwo) => async (dispatch) => {
     }
 }
 
+export const resetFriendDataThunk = () => (dispatch) => {
+    dispatch(resetFriendData());
+}
+
 export default (state = initialState, action) => {
     switch (action.type) {
         case SET_FRIEND_DATA:
             return {
                 ...state,
-                friends: action.payload
+                friends: action.payload.friends,
+                balance: action.payload.total
             };
         case SET_PENDING_FRIEND_DATA:
             return {
@@ -223,6 +236,8 @@ export default (state = initialState, action) => {
                 ...state,
                 friends: state.friends.filter(item => item != action.payload)
             }
+        case RESET_FRIEND_DATA:
+            return initialState
         default:
             return state;
     }

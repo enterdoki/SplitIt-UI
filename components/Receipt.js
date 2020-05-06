@@ -1,12 +1,13 @@
 import React, { useState, memo } from 'react';
+import axios from 'axios';
 import { connect } from "react-redux";
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import { DataTable, Button, Searchbar } from 'react-native-paper';
 import { theme } from '../core/theme';
 import { SearchableFlatList } from "react-native-searchable-list";
-import { Right } from 'native-base';
+import * as SecureStore from 'expo-secure-store';
 
-const Receipt = ({ receipt, friend }) => {
+const Receipt = ({ user, receipt, friend }) => {
     const [query, setQuery] = useState('');
     const [tagged, setTagged] = useState([]);
     const searchAttribute = "firstName";
@@ -30,6 +31,38 @@ const Receipt = ({ receipt, friend }) => {
                 ))}
             </View>
         )
+    }
+
+    const handleSplit = async (array, total) => {
+        let promises = [];
+        const id = user['user'].id;
+        const token = await SecureStore.getItemAsync('Token');
+
+        if (array.length > 0) {
+            if (tip !== 0 && tip > -1) {
+                total += (total * tip / 100)
+            }
+
+            let amount = (total / array.length).toFixed(2);
+
+            for (let i = 0; i < array.length; i++) {
+                promises.push(
+                    axios.put(`http://api-splitit.herokuapp.com/api/invoice/request/${id}/${array[i].id}`, { balance: amount }, {
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                )
+            }
+            let res = await axios.all(promises);
+            if (res) {
+                alert("$" + amount + " have been sent to each friend successfully!");
+            }
+        }
+        else {
+            alert('You have to tag some friends first!')
+        }
     }
 
     return (
@@ -58,8 +91,8 @@ const Receipt = ({ receipt, friend }) => {
                 )}
                 keyExtractor={(item, index) => index.toString()} />
             <DataTable>
-                {/* <Text style={styles.title}>{receipt['receiptData']['merchantName'].data}</Text> */}
-                <Text style={styles.title}>Chipotle Mexican Grill</Text>
+                <Text style={styles.title}>{receipt['receiptData']['merchantName'].data}</Text>
+                {/* <Text style={styles.title}>Chipotle Mexican Grill</Text> */}
                 <DataTable.Header>
                     <DataTable.Title>Item</DataTable.Title>
                     <DataTable.Title numeric>Amount</DataTable.Title>
@@ -78,11 +111,11 @@ const Receipt = ({ receipt, friend }) => {
                     <DataTable.Cell numeric>0.00</DataTable.Cell>
                 </DataTable.Row>
 
-                {/* <Text style={styles.text}>Sales Tax: ${receipt['receiptData']['taxAmount'].data}</Text>
-                <Text style={styles.text}>Total: ${receipt['receiptData']['totalAmount'].data}</Text> */}
+                <Text style={styles.text}>Sales Tax: ${receipt['receiptData']['taxAmount'].data}</Text>
+                <Text style={styles.text}>Total: ${receipt['receiptData']['totalAmount'].data}</Text>
 
-                <Text style={styles.text}>Sales Tax: $0.79</Text>
-                <Text style={styles.text}>Total: $9.80</Text>
+                {/* <Text style={styles.text}>Sales Tax: $0.79</Text>
+                <Text style={styles.text}>Total: $9.80</Text> */}
                 {tip !== 0 && <Text style={styles.text}>Tip Amount: {tip}%</Text>}
             </DataTable>
 
@@ -105,7 +138,7 @@ const Receipt = ({ receipt, friend }) => {
 
             {tagged.length > 0 && display()}
             <View style={styles.button}>
-                <Button style={{ margin: 5 }} mode="contained" onPress={() => console.log('receipt button pressed')}> Split By Total</Button>
+                <Button style={{ margin: 5 }} mode="contained" onPress={() => handleSplit(tagged, 9.80)}> Split By Total</Button>
                 <Button style={{ margin: 5 }} mode="contained" onPress={() => console.log('receipt button pressed')}> Next</Button>
             </View>
 
@@ -170,6 +203,7 @@ const styles = StyleSheet.create({
 });
 
 const mapState = state => ({
+    user: state.user,
     receipt: state.receipt,
     friend: state.friend
 })
