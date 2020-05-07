@@ -37,14 +37,15 @@ const Receipt = ({ user, receipt, friend }) => {
         let promises = [];
         const id = user['user'].id;
         const token = await SecureStore.getItemAsync('Token');
+        let number = array.length + 1;
 
         if (array.length > 0) {
             if (tip !== 0 && tip > -1) {
                 total += (total * tip / 100)
             }
-
-            let amount = (total / array.length).toFixed(2);
-
+            
+            let amount = ((total - total/number)/(number-1)).toFixed(2);
+            
             for (let i = 0; i < array.length; i++) {
                 promises.push(
                     axios.put(`http://api-splitit.herokuapp.com/api/invoice/request/${id}/${array[i].id}`, { balance: amount }, {
