@@ -13,6 +13,7 @@ import Receipt from '../components/Receipt';
 import { theme } from '../core/theme';
 import { getFriendsThunk, getPendingFriendsThunk, resetFriendDataThunk } from '../store/utilities/friend';
 import { SearchableFlatList } from "react-native-searchable-list";
+import Details from '../components/Details';
 
 class HomeScreen extends React.Component {
   _isMounted = false
@@ -24,6 +25,7 @@ class HomeScreen extends React.Component {
       balance: 0,
       image: ' ',
       query: '',
+      toggleDetails: false,
       searchAttribute: "firstName",
       ignoreCase: true
     }
@@ -130,7 +132,7 @@ class HomeScreen extends React.Component {
             actions={[
               {
                 label: 'View Details',
-                onPress: () => console.log('details pressed.'),
+                onPress: () => this.setState({ toggleDetails: !this.state.toggleDetails }),
               },
               {
                 label: 'Settle Balance',
@@ -141,6 +143,7 @@ class HomeScreen extends React.Component {
             <Paragraph>Your current balance is: ${this.state.balance}.</Paragraph>
           </Banner>
 
+          {this.state.toggleDetails && <Details />}
 
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 

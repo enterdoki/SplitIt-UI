@@ -15,6 +15,7 @@ const Receipt = ({ user, receipt, friend }) => {
     const ignoreCase = true;
     const [custom, setCustom] = useState(false);
 
+    
     const handleTag = (user) => {
         setTagged(tagged => [...tagged, user])
     }
@@ -33,6 +34,7 @@ const Receipt = ({ user, receipt, friend }) => {
         )
     }
 
+    
     const handleSplit = async (array, total) => {
         let promises = [];
         const id = user['user'].id;
@@ -43,9 +45,9 @@ const Receipt = ({ user, receipt, friend }) => {
             if (tip !== 0 && tip > -1) {
                 total += (total * tip / 100)
             }
-            
-            let amount = ((total - total/number)/(number-1)).toFixed(2);
-            
+
+            let amount = ((total - total / number) / (number - 1)).toFixed(2);
+
             for (let i = 0; i < array.length; i++) {
                 promises.push(
                     axios.put(`http://api-splitit.herokuapp.com/api/invoice/request/${id}/${array[i].id}`, { balance: amount }, {
@@ -94,23 +96,27 @@ const Receipt = ({ user, receipt, friend }) => {
             <DataTable>
                 <Text style={styles.title}>{receipt['receiptData']['merchantName'].data}</Text>
                 {/* <Text style={styles.title}>Chipotle Mexican Grill</Text> */}
-                <DataTable.Header>
-                    <DataTable.Title>Item</DataTable.Title>
-                    <DataTable.Title numeric>Amount</DataTable.Title>
-                    <DataTable.Title numeric>Price ($)</DataTable.Title>
-                </DataTable.Header>
 
-                <DataTable.Row>
-                    <DataTable.Cell>Chicken Bowl</DataTable.Cell>
-                    <DataTable.Cell numeric>1.0</DataTable.Cell>
-                    <DataTable.Cell numeric>8.95</DataTable.Cell>
-                </DataTable.Row>
+                {receipt['receiptData']['merchantName'].data.includes("Chipotle") &&
+                    <View>
+                        <DataTable.Header>
+                            <DataTable.Title>Item</DataTable.Title>
+                            <DataTable.Title numeric>Amount</DataTable.Title>
+                            <DataTable.Title numeric>Price ($)</DataTable.Title>
+                        </DataTable.Header>
+                        <DataTable.Row>
+                            <DataTable.Cell>Chicken Bowl</DataTable.Cell>
+                            <DataTable.Cell numeric>1.0</DataTable.Cell>
+                            <DataTable.Cell numeric>8.95</DataTable.Cell>
+                        </DataTable.Row>
 
-                <DataTable.Row>
-                    <DataTable.Cell>Chips and Guac</DataTable.Cell>
-                    <DataTable.Cell numeric>1.0</DataTable.Cell>
-                    <DataTable.Cell numeric>0.00</DataTable.Cell>
-                </DataTable.Row>
+                        <DataTable.Row>
+                            <DataTable.Cell>Chips and Guac</DataTable.Cell>
+                            <DataTable.Cell numeric>1.0</DataTable.Cell>
+                            <DataTable.Cell numeric>0.00</DataTable.Cell>
+                        </DataTable.Row>
+                    </View>
+                }
 
                 <Text style={styles.text}>Sales Tax: ${receipt['receiptData']['taxAmount'].data}</Text>
                 <Text style={styles.text}>Total: ${receipt['receiptData']['totalAmount'].data}</Text>

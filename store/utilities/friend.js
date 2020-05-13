@@ -10,6 +10,7 @@ const DECLINE_FRIEND = "DECLINE_FRIEND";
 const RESET_FRIEND_DATA = "RESET_FRIEND_DATA";
 
 const initialState = {
+    data: [],
     friends: [],
     pending: [],
     blocked: [],
@@ -81,7 +82,7 @@ export const getFriendsThunk = (id) => async (dispatch) => {
             friends.push(data[i].userTwo)
         }
         
-        dispatch(setFriendData({friends,total}));
+        dispatch(setFriendData({friends,total, data}));
     } catch (err) {
         console.log(err);
     }
@@ -208,7 +209,8 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 friends: action.payload.friends,
-                balance: action.payload.total
+                balance: action.payload.total,
+                data: action.payload.data
             };
         case SET_PENDING_FRIEND_DATA:
             return {
