@@ -10,6 +10,7 @@ const Details = ({ friend }) => {
                 <Card key={index} style={{ margin: 5 }}>
                     {item['balance'] > 0 && <Card.Content>
                         <Paragraph style={styles.paragraph}>You owe {item['userTwo'].firstName} ${item['balance']}.</Paragraph>
+                        <Button style={styles.button} mode="contained" onPress={() => console.log('boop')}>Pay</Button>
                     </Card.Content>}
 
                 </Card>
@@ -29,6 +30,12 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontWeight: '600',
         color: 'red'
+    },
+    button: {
+        position: 'absolute',
+        bottom: 10,
+        right: 10,
+        width: 30,
     }
 });
 

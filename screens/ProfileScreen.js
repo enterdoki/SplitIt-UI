@@ -45,8 +45,12 @@ const ProfileScreen = ({ user, navigation, addFriendThunk, deleteFriendThunk }) 
                     <Text style={styles.name}>{profile.firstName}{' '}{profile.lastName}</Text>
                     <Text style={styles.info}>{profile.email}</Text>
 
-                    {status !== 'ACCEPTED' && <TouchableOpacity style={styles.buttonContainer} onPress={() => addFriendThunk(profile, user['user'].id, profile.id)}>
+                    {(status !== 'ACCEPTED' && status !== 'PENDING') && <TouchableOpacity style={styles.buttonContainer} onPress={() => addFriendThunk(profile, user['user'].id, profile.id)}>
                         <Text style={{ fontSize: 18, color: 'white' }}>Add user</Text>
+                    </TouchableOpacity>}
+
+                    {status === 'PENDING' && <TouchableOpacity style={styles.buttonContainer}>
+                        <Text style={{ fontSize: 18, color: 'white' }}>Pending Approval</Text>
                     </TouchableOpacity>}
 
                     {(status !== 'PENDING' && status === 'ACCEPTED') && <TouchableOpacity style={styles.buttonContainer} onPress={() => console.log('add')}>
