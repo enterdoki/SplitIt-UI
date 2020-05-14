@@ -12,7 +12,7 @@ const Details = ({ friend, payBalanceThunk }) => {
                 <Card key={index} style={{ margin: 5 }}>
                     {item['balance'] > 0 && <Card.Content>
                         <Paragraph style={styles.paragraph}>You owe {item['userTwo'].firstName} ${item['balance']}.</Paragraph>
-                        <Button style={styles.button} mode="contained" onPress={() => payBalanceThunk(item['balance'])}>Pay</Button>
+                        <Button style={styles.button} mode="contained" onPress={() => payBalanceThunk(item['balance'], item)}>Pay</Button>
                     </Card.Content>}
 
                 </Card>

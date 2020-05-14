@@ -73,10 +73,10 @@ const resetFriendData = () => {
     }
 }
 
-export const payBalanceThunk = (amount) => async(dispatch) => {
+export const payBalanceThunk = (amount, data) => async(dispatch) => {
     try {
         console.log(amount);
-        dispatch(payBalance(amount));
+        dispatch(payBalance({amount, data}));
     } catch(err) {  
         console.log(err);
     }
@@ -225,7 +225,8 @@ export default (state = initialState, action) => {
         case PAY_BALANCE: 
             return {
                 ...state,
-                balance: state.balance - action.payload
+                balance: state.balance - action.payload.amount,
+                data: state.data.filter(item => item != action.payload.data)
             };
         case SET_FRIEND_DATA:
             return {

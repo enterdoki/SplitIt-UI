@@ -15,6 +15,7 @@ const Receipt = ({ user, receipt, friend }) => {
     const ignoreCase = true;
     const [custom, setCustom] = useState(false);
 
+    console.log(receipt['receiptData']);
     
     const handleTag = (user) => {
         setTagged(tagged => [...tagged, user])
