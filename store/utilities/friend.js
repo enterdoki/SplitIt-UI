@@ -8,6 +8,7 @@ const DELETE_FRIEND = "DELETE_FRIEND";
 const ADD_FRIEND = "ADD_FRIEND";
 const DECLINE_FRIEND = "DECLINE_FRIEND";
 const RESET_FRIEND_DATA = "RESET_FRIEND_DATA";
+const PAY_BALANCE = "PAY_BALANCE";
 
 const initialState = {
     data: [],
@@ -15,6 +16,13 @@ const initialState = {
     pending: [],
     blocked: [],
     balance: 0,
+};
+
+const payBalance = (data) => {
+    return {
+        type: PAY_BALANCE,
+        payload: data
+    }
 };
 
 const setFriendData = (data) => {
@@ -62,6 +70,15 @@ const declineFriend = (data) => {
 const resetFriendData = () => {
     return {
         type: RESET_FRIEND_DATA
+    }
+}
+
+export const payBalanceThunk = (amount) => async(dispatch) => {
+    try {
+        console.log(amount);
+        dispatch(payBalance(amount));
+    } catch(err) {  
+        console.log(err);
     }
 }
 
@@ -205,6 +222,11 @@ export const resetFriendDataThunk = () => (dispatch) => {
 
 export default (state = initialState, action) => {
     switch (action.type) {
+        case PAY_BALANCE: 
+            return {
+                ...state,
+                balance: state.balance - action.payload
+            };
         case SET_FRIEND_DATA:
             return {
                 ...state,

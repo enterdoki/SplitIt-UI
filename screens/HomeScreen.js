@@ -22,7 +22,6 @@ class HomeScreen extends React.Component {
     this.state = {
       firstName: '',
       lastName: '',
-      balance: 0,
       image: ' ',
       query: '',
       toggleDetails: false,
@@ -41,7 +40,6 @@ class HomeScreen extends React.Component {
     this.setState({
       firstName: this.props.user['user'].firstName,
       lastName: this.props.user['user'].lastName,
-      balance: this.props.friend.balance,
       image: this.props.user['user'].profilePicture,
     })
   }
@@ -140,7 +138,7 @@ class HomeScreen extends React.Component {
               },
             ]}
           >
-            <Paragraph>Your current balance is: ${this.state.balance}.</Paragraph>
+            <Paragraph>Your current balance is: ${this.props.friend.balance}.</Paragraph>
           </Banner>
 
           {this.state.toggleDetails && <Details />}
